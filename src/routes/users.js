@@ -16,11 +16,8 @@ const upload = multer({ storage: storage })
 const usersControllers = require('../controllers/users')
 const { isAuthenticated } = require('../lib/auth')
 
-router.get('/', isAuthenticated, usersControllers.fetchUserInfo)
-router.get('/business', isAuthenticated, usersControllers.fetchBusinesses)
 router.post('/signin', usersControllers.signIn)
 router.post('/signup', usersControllers.signUp)
-router.post('/permission/ga', usersControllers.authGA)
 
 router.get('/permission', isAuthenticated, usersControllers.permissionList)
 

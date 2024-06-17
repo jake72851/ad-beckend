@@ -13,7 +13,6 @@ router.get('/auth_localhost', controllers.authLocalhost)
 // 백엔드 테스트 전용
 router.get('/authBack', controllers.authBack)
 
-// router.get('/callback', isAuthenticated, controllers.callback)
 router.get('/callback', controllers.callback)
 
 router.post('/code', isAuthenticated, controllers.code)

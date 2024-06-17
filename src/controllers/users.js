@@ -88,31 +88,7 @@ async function longTokenPage(userId, token) {
   return resultResponse
 }
 
-exports.fetchUserInfo = async (req, res) => {
-  const { id } = req.user
-  try {
-    const user = await User.findById(id).lean()
-    res.status(200).json({ code: 'SUCCESS', data: user })
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ code: 'ERROR', error: error.message })
-  }
-}
 
-exports.fetchBusinesses = async (req, res) => {
-  const { id } = req.user
-  if (id !== process.env.VPLATE_ADMIN_ID) {
-    res.status(401).json({ code: 'Unauthorized', error: '관리자 권한이 없습니다' })
-    return
-  }
-  try {
-    const users = await User.find().lean()
-    res.status(200).json({ code: 'SUCCESS', data: users })
-  } catch (error) {
-    console.log(error)
-    res.status(400).json({ code: 'ERROR', error: error.message })
-  }
-}
 
 exports.signIn = async (req, res) => {
   try {
@@ -177,40 +153,7 @@ exports.signUp = async (req, res) => {
   }
 }
 
-exports.authGA = async (req, res) => {
-  const { _id, account_id, property_id, property_name, view_id, view_name } = req.body
 
-  try {
-    const user = await User.findById(_id).select('ga_properties')
-    if (user.ga_properties.some((item) => item.property_id === property_id)) {
-      res.status(409).json({
-        code: 'DUPLICATED',
-        message: 'property_id는 중복될 수 없습니다.',
-      })
-      return
-    }
-    user.ga_properties = [
-      ...user.ga_properties,
-      {
-        account_id,
-        property_id,
-        property_name,
-        view_id,
-        view_name,
-      },
-    ]
-    await user.save()
-    res.status(200).json({
-      code: 'SUCCESS',
-      message: '연동 완료',
-    })
-  } catch (e) {
-    console.log(e)
-    res.status(500).json({
-      message: e.message,
-    })
-  }
-}
 
 exports.authFbPage = async (req, res) => {
   try {
