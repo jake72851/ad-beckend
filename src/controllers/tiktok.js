@@ -18,19 +18,14 @@ async function checkToken(userInfo, userId) {
   if (tiktokUserInfo && tiktokUserInfo.expires_in && tiktokUserInfo.expires_createdAt) {
     // 대한민국 시간대인 Asia/Seoul을 사용
     const now = moment().tz('Asia/Seoul').unix()
-    console.log('checkToken > now =', now)
     const expiresAt = tiktokUserInfo.expires_createdAt + tiktokUserInfo.expires_in
-    console.log('checkToken > expiresAt =', expiresAt)
     if (now < expiresAt) {
       console.log('checkToken > 유효한 토큰입니다.')
     } else {
       console.log('checkToken > 만료된 토큰입니다. 리프레시 토큰 발급을 시도합니다.')
       // 리프레시 토큰 만료시간 체크
       const refreshExpiresAt = tiktokUserInfo.expires_createdAt + tiktokUserInfo.refresh_expires_in * 1000
-      console.log('checkToken > refreshExpiresAt =', refreshExpiresAt)
       if (now < refreshExpiresAt) {
-        console.log('checkToken > 유효한 리프레시 토큰입니다. users 컬렉션에 업데이트 합니다.')
-
         const tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/'
         const data = qs.stringify({
           client_key: '...',
@@ -44,7 +39,6 @@ async function checkToken(userInfo, userId) {
         }
         const result = await axios.post(tokenEndpoint, data, { headers })
         result.data.expires_createdAt = now
-        console.log('checkToken > result.data =', result.data)
 
         const user = await User.findById(userId)
         user.tiktok_user_info = result.data
@@ -160,7 +154,6 @@ exports.callback = async (req, res) => {
     // 대한민국 시간대인 Asia/Seoul을 사용
     const koreaTime = moment().tz('Asia/Seoul')
     result.data.expires_createdAt = koreaTime.unix()
-    console.log('result.data =', result.data)
     const config = {
       headers: {
         Authorization: `Bearer ${result.data.access_token}`,
@@ -171,7 +164,6 @@ exports.callback = async (req, res) => {
       'https://open.tiktokapis.com/v2/user/info/?fields=open_id,union_id,avatar_url,display_name',
       config
     )
-    console.log('result2.data =', result2.data)
 
     // 엑세스 토큰 저장
     const user = await User.findById(id)
@@ -189,9 +181,7 @@ exports.callback = async (req, res) => {
 exports.code = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('vad token user id =', id)
     const { code } = req.body
-    console.log('code =', code)
     if (!id || !code) {
       return res.status(401).json({
         code: 'MISSING_PARAM',
@@ -230,7 +220,6 @@ exports.code = async (req, res) => {
     // 대한민국 시간대인 Asia/Seoul을 사용
     const koreaTime = moment().tz('Asia/Seoul')
     result.data.expires_createdAt = koreaTime.unix()
-    console.log('result.data =', result.data)
 
     const config = {
       headers: {
@@ -259,9 +248,7 @@ exports.code = async (req, res) => {
 exports.codeLocalhost = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('vad token user id =', id)
     const { code } = req.body
-    console.log('code =', code)
     if (!id || !code) {
       return res.status(401).json({
         code: 'MISSING_PARAM',
@@ -300,7 +287,6 @@ exports.codeLocalhost = async (req, res) => {
     // 대한민국 시간대인 Asia/Seoul을 사용
     const koreaTime = moment().tz('Asia/Seoul')
     result.data.expires_createdAt = koreaTime.unix()
-    console.log('result.data =', result.data)
     const config = {
       headers: {
         Authorization: `Bearer ${result.data.access_token}`,
@@ -329,7 +315,6 @@ exports.codeLocalhost = async (req, res) => {
 exports.userInfo = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('vad token user id =', id)
     if (!id) {
       return res.status(401).json({
         code: 'MISSING_PARAM',
@@ -340,7 +325,6 @@ exports.userInfo = async (req, res) => {
     // 엑세스토큰 처리
     const user = await User.findById(id)
     if (user.tiktok_user_info && user.tiktok_user_info.access_token) {
-      console.log('user.tiktok_user_info.access_token =', user.tiktok_user_info.access_token)
       const checkTokenResult = await checkToken(user, id)
       if (checkTokenResult === 'expired') {
         return res.status(401).json({
@@ -370,8 +354,6 @@ exports.userInfo = async (req, res) => {
       'Content-Type': 'application/json; charset=UTF-8',
     }
     const result = await axios.post(url, data, { headers })
-    // console.log('result =', result)
-    console.log('result.data =', result.data)
 
     // 틱톡 에러코드 처리 - http status code가 200 이면서 오류코드가 있는 경우
     if (result.data.error.code === 'spam_risk_too_many_posts') {
@@ -421,9 +403,7 @@ exports.userInfo = async (req, res) => {
 exports.video = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('vad token user id =', id)
     const { post_info, source_info } = req.body
-    console.log('post_info =', post_info)
     if (!id || !post_info || !source_info) {
       return res.status(401).json({
         code: 'MISSING_PARAM',
@@ -434,7 +414,6 @@ exports.video = async (req, res) => {
     // 엑세스토큰 처리
     const user = await User.findById(id)
     if (user.tiktok_user_info && user.tiktok_user_info.access_token) {
-      console.log('user.tiktok_user_info.access_token =', user.tiktok_user_info.access_token)
       const checkTokenResult = await checkToken(user, id)
       if (checkTokenResult === 'expired') {
         return res.status(401).json({
@@ -526,9 +505,7 @@ exports.video = async (req, res) => {
 exports.status = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('vad token user id =', id)
     const { publish_id } = req.body
-    console.log('publish_id =', publish_id)
     if (!id || !publish_id) {
       return res.status(401).json({
         code: 'MISSING_PARAM',
@@ -539,7 +516,6 @@ exports.status = async (req, res) => {
     // 엑세스토큰 처리
     const user = await User.findById(id)
     if (user.tiktok_user_info && user.tiktok_user_info.access_token) {
-      console.log('user.tiktok_user_info.access_token =', user.tiktok_user_info.access_token)
       const checkTokenResult = await checkToken(user, id)
       if (checkTokenResult === 'expired') {
         return res.status(401).json({
@@ -627,7 +603,6 @@ exports.list = async (req, res) => {
     // 엑세스토큰 처리
     const user = await User.findById(id)
     if (user.tiktok_user_info && user.tiktok_user_info.access_token) {
-      console.log('user.tiktok_user_info.access_token =', user.tiktok_user_info.access_token)
       const checkTokenResult = await checkToken(user, id)
       if (checkTokenResult === 'expired') {
         return res.status(401).json({
@@ -715,7 +690,6 @@ exports.accountDelete = async (req, res) => {
     }
 
     const user = await User.findById(id)
-    console.log('user =', user)
 
     if (user.tiktok_user_info) {
       // delete user.fb_page_info

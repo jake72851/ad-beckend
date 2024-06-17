@@ -111,10 +111,8 @@ exports.id = async (req, res) => {
 exports.businessAccount = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
 
     if (!id || !instagram_business_account) {
       return res.status(401).json({
@@ -155,7 +153,6 @@ exports.businessAccount = async (req, res) => {
       user.fb_user_info.accessToken +
       '&fields=biography,followers_count,follows_count,id,ig_id,media_count,name,profile_picture_url,username'
     const result = await axios.get(url)
-    console.log('[axios] Response.data =', result.data)
 
     if (result.data.username) {
       responses.id = instagram_business_account
@@ -176,10 +173,8 @@ exports.businessAccount = async (req, res) => {
 exports.publishingLimit = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
 
     if (!id || !instagram_business_account) {
       return res.status(401).json({
@@ -217,7 +212,6 @@ exports.publishingLimit = async (req, res) => {
       '/content_publishing_limit?fields=quota_usage,config&access_token=' +
       user.fb_user_info.accessToken
     const result = await axios.get(url)
-    console.log('result.data.data[0] =', result.data.data[0])
 
     const responses = {}
 
@@ -237,10 +231,8 @@ exports.publishingLimit = async (req, res) => {
 exports.tagEligibility = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
 
     if (!id || !instagram_business_account) {
       return res.status(401).json({
@@ -296,10 +288,8 @@ exports.tagEligibility = async (req, res) => {
 exports.catalog = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
 
     if (!id || !instagram_business_account) {
       return res.status(401).json({
@@ -336,9 +326,6 @@ exports.catalog = async (req, res) => {
       '/available_catalogs?access_token=' +
       user.fb_user_info.accessToken
     const result = await axios.get(url)
-    // console.log('result =', result)
-    // console.log('result.data.paging =', result.data.paging)
-    console.log('result.data =', result.data)
 
     res.status(200).json({ code: 'SUCCESS', data: result.data.data })
   } catch (error) {
@@ -350,11 +337,8 @@ exports.catalog = async (req, res) => {
 exports.catalogProduct = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account, catalog_id } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
-    console.log('catalog_id =', catalog_id)
 
     if (!id || !instagram_business_account || !catalog_id) {
       return res.status(401).json({
@@ -393,10 +377,8 @@ exports.catalogProduct = async (req, res) => {
       '&catalog_id=' +
       catalog_id
     const result = await axios.get(url)
-    console.log('result.data =', result.data)
 
     const resultMap = result.data.data.map((data) => {
-      console.log('catalogProduct > data.product_id =', data.product_id)
       if (data.product_id === 6892429700879553) data.review_status = 'rejected'
       return data
     })
@@ -412,12 +394,8 @@ exports.catalogProduct = async (req, res) => {
 exports.productAppeal = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account, product_id, appeal_reason } = req.body
-    console.log('instagram_business_account =', instagram_business_account)
-    console.log('product_id =', product_id)
-    console.log('appeal_reason =', appeal_reason)
 
     if (!id || !instagram_business_account || !product_id || !appeal_reason) {
       return res.status(401).json({
@@ -475,13 +453,9 @@ exports.productAppeal = async (req, res) => {
 exports.mediaCreate = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     // const { instagram_business_account, page_id, video_url, product_tags } = req.body
     const { instagram_business_account, video_url, caption } = req.body
-    console.log('instagram_business_account =', instagram_business_account)
-    console.log('video_url =', video_url)
-    console.log('caption =', caption)
 
     if (!id || !instagram_business_account || !video_url || !caption) {
       return res.status(401).json({
@@ -499,7 +473,7 @@ exports.mediaCreate = async (req, res) => {
         message: 'The video URL is not mp4. please try again.',
       })
     }
-    console.log('extname =', extname)
+
     https.get(video_url, (response) => {
       const contentType = response.headers['content-type']
       if (contentType && mime.extension(contentType) === 'mp4') {
@@ -545,8 +519,7 @@ exports.mediaCreate = async (req, res) => {
     }
     const headers = {}
     const result = await axios.post(url, data, { headers })
-    console.log('컨테이너 id =', result.data)
-    // result.data = { id: '18009280265102724' } // 컨테이너 id
+
     const creationId = result.data.id
 
     // 영상 업로드
@@ -562,12 +535,10 @@ exports.mediaCreate = async (req, res) => {
         })
       }
       await wait(5000)
-      console.log('creationId =', creationId, '업로드 status =', status)
     }
 
     // 영상 게시 요청
     const postResult = await postStart(instagram_business_account, creationId, user.fb_user_info.accessToken)
-    console.log('postResult =', postResult)
 
     res.status(200).json({ code: 'SUCCESS', message: 'Instagram posting completed' })
   } catch (error) {
@@ -579,10 +550,8 @@ exports.mediaCreate = async (req, res) => {
 exports.mediaList = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
 
     if (!id || !instagram_business_account) {
       return res.status(401).json({
@@ -620,9 +589,6 @@ exports.mediaList = async (req, res) => {
       user.fb_user_info.accessToken +
       '&fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username,children'
     const result = await axios.get(url)
-    // console.log('result =', result)
-    // console.log('result.data.paging =', result.data.paging)
-    console.log('result.data.data =', result.data.data)
 
     res.status(200).json({ code: 'SUCCESS', data: result.data.data })
   } catch (error) {
@@ -634,10 +600,8 @@ exports.mediaList = async (req, res) => {
 exports.mediaProductTagList = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { instagram_business_account } = req.query
-    console.log('instagram_business_account =', instagram_business_account)
 
     if (!id || !instagram_business_account) {
       return res.status(401).json({
@@ -675,10 +639,9 @@ exports.mediaProductTagList = async (req, res) => {
       '/media?fields=id,media_type,media_url,permalink,thumbnail_url,timestamp,username&access_token=' +
       user.fb_user_info.accessToken
     let listResult = await axios.get(url)
-    console.log('listResult.data =', listResult.data)
     const result = []
     result.push(...listResult.data.data)
-    // listResult.data.paging.next = url
+
     while (listResult.data.paging.next) {
       const url = listResult.data.paging.next
       listResult = await axios.get(url)
@@ -689,10 +652,8 @@ exports.mediaProductTagList = async (req, res) => {
       const url =
         'https://graph.facebook.com/v18.0/' + item.id + '/product_tags?access_token=' + user.fb_user_info.accessToken
       const result = await axios.get(url)
-      console.log('result.data =', result.data)
       if (result.data.data.length > 0) {
         const resultMap = result.data.data.map((data) => {
-          console.log('data.product_id =', data.product_id)
           if (data.product_id === 6892429700879553) data.review_status = 'rejected'
           return data
         })
@@ -701,7 +662,6 @@ exports.mediaProductTagList = async (req, res) => {
         item.product_tag = []
       }
     }
-    console.log('result =', result)
 
     res.status(200).json({ code: 'SUCCESS', message: result })
   } catch (error) {
@@ -713,11 +673,8 @@ exports.mediaProductTagList = async (req, res) => {
 exports.updatedTags = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { product_id, media_id } = req.body
-    console.log('updatedTags > product_id =', product_id)
-    console.log('updatedTags > media_id =', media_id)
 
     if (!id || !product_id || !media_id) {
       return res.status(401).json({
@@ -755,7 +712,6 @@ exports.updatedTags = async (req, res) => {
     }
     const headers = {}
     const result = await axios.post(url, data, { headers })
-    console.log('result.data =', result.data)
 
     let responses
     if (result.data.success) {
@@ -774,12 +730,8 @@ exports.updatedTags = async (req, res) => {
 exports.deleteTags = async (req, res) => {
   try {
     const { id } = req.user
-    console.log('token id =', id)
 
     const { product_id, media_id, merchant_id } = req.body
-    console.log('product_id =', product_id)
-    console.log('media_id =', media_id)
-    console.log('merchant_id =', merchant_id)
 
     if (!id || !product_id || !media_id || !merchant_id) {
       return res.status(401).json({
@@ -820,7 +772,6 @@ exports.deleteTags = async (req, res) => {
       '"}]&access_token=' +
       user.fb_user_info.accessToken
     const result = await axios.delete(url)
-    console.log('result.data =', result.data)
 
     let responses
     if (result.data.success) {

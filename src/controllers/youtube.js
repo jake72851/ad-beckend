@@ -5,7 +5,7 @@ const User = require('../models/users')
 const wait = require('waait')
 
 const { google } = require('googleapis')
-const CLIENT_ID = '342481640978-cj1rj4csu3dsnmam6fk0qg23c7qsjggn.apps.googleusercontent.com'
+const CLIENT_ID = '...'
 const oauth2Client = new google.auth.OAuth2(
   CLIENT_ID, // Google Cloud에서 생성한 OAuth 2.0 클라이언트 ID
   '...', // 클라이언트 시크릿
