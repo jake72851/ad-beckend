@@ -5,4 +5,4 @@
    
 권한 요청용 시연 영상   
 
-![youtube](./img.jpg) https://youtu.be/Ta3u5wKpiBE
+[![youtube](./img.jpg)](https://youtu.be/Ta3u5wKpiBE)
