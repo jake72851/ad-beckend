@@ -4,6 +4,4 @@
 - 피드백이 빠르지 않은것도 있지만, 명확하지 않은 피드백으로 인해 고생을 많이 하였습니다.
 </br>
 권한 요청용 시연 영상
-![Video Label](http://img.youtube.com/vi/Ta3u5wKpiBE/0.jpg) (https://youtu.be/Ta3u5wKpiBE)
-</br>
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Ta3u5wKpiBE/0.jpg)](https://www.youtube.com/watch?v=Ta3u5wKpiBE)
+![youtube](./img.jpg) https://youtu.be/Ta3u5wKpiBE
